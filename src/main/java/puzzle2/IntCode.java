@@ -3,77 +3,79 @@ package puzzle2;
 public class IntCode {
 	private static final int FACTOR = 2;
 	private static final int SUM = 1;
-	private int indexOpCode = 0;
-	private OpCode currentOpCodes;
-		
+	public static final int OP_CODE_SIZE = 4;
+	public static final int HALT_OP_CODE = 99;
+	private int opCodeIndex = 0;
+	private int nextStarter = 0;
+	private OpCode currentOpCode;
+	private int [] intCode;
 
-	public int[] process(int[] inputCode) {
-		if(isValidStarter(inputCode[0])){
-			do {
-				this.currentOpCodes = readOpCode(inputCode);
-				if(this.currentOpCodes == null)
-					break;
-				inputCode = processOpCode(inputCode);
-				for (int i : inputCode) {
-					System.out.print(","+i);
-				}
+	public IntCode(){
+		this.currentOpCode = new OpCode();
+	}
 
-				indexOpCode ++;
-			} while (this.currentOpCodes != null);
+	public int[] process() {
+		if(isValidStarter(intCode[0])){
+			fetchAndProcessOpCodes();
 		}
 		else {
 			return null;
 		}
-		return inputCode;
+		return intCode;
 	}
 
-	private OpCode readOpCode(int[] inputCode) {
-		int realIndex = 0 + (4*indexOpCode);
-		if(isValidIndexAndStarter(inputCode, realIndex)) {
-			return new OpCode(inputCode[0 + realIndex], inputCode[1 + realIndex], inputCode[2 + realIndex], inputCode[3 + realIndex]);			
-		} else {
-			return null;
-		}
+	private void fetchAndProcessOpCodes() {
+		do {
+			processNextOpCode();
+		} while (isNextStarterOk(nextStarter));
 	}
 
-	private boolean isValidIndexAndStarter(int[] inputCode, int realIndex) {
-		return realIndex < inputCode.length && isValidStarter(inputCode[0 + realIndex]);
+	private void processNextOpCode() {
+		currentOpCode = initOpCode();
+		if(starterIsSum()) {
+			processOpCodeSum();
+		}
+		else if(starterIsFactor()) {
+			processOpCodeFactor();
+		}
+		updateIndexes();
 	}
 
+	private OpCode initOpCode() {
+		return new OpCode(intCode[0 + opCodeIndex],intCode[intCode[1 + opCodeIndex]],intCode[intCode[2 + opCodeIndex]],intCode[3 + opCodeIndex] );
+	}
 
-	private int[] processOpCode(int[] inputCode) {
-		int starter = currentOpCodes.getStarter();
-		int positionToReplace = inputCode[currentOpCodes.getPositionToReplace()];
-		int leftVal = inputCode[inputCode[currentOpCodes.getPosition1()]];
-		int rightVal = inputCode[inputCode[currentOpCodes.getPosition2()]];
-		if(isSum(starter)) {
-			inputCode[positionToReplace] = leftVal + rightVal;
-		}
-		else if(isFactor(starter)) {
-			inputCode[positionToReplace] = leftVal * rightVal;
-		}
-		return inputCode;
+	private void processOpCodeSum() {
+		intCode[currentOpCode.getPositionToReplace()] = currentOpCode.getLeftVal() + currentOpCode.getRightVal();
+	}
+
+	private void processOpCodeFactor() {
+		intCode[currentOpCode.getPositionToReplace()] = currentOpCode.getLeftVal() * currentOpCode.getRightVal();
+	}
+
+	private void updateIndexes() {
+		nextStarter = intCode[opCodeIndex + OP_CODE_SIZE];
+		opCodeIndex += OP_CODE_SIZE;
+	}
+
+	private boolean isNextStarterOk(int nextStarter) {
+		return nextStarter != HALT_OP_CODE;
 	}
 
 	private boolean isValidStarter(int starter) {
-		return isSum(starter) || isFactor(starter);
+		currentOpCode.setStarter(starter);
+		return starterIsSum() || starterIsFactor();
 	}
 
-	private boolean isFactor(int starter) {
-		return starter  == FACTOR;
+	private boolean starterIsFactor() {
+		return currentOpCode.getStarter()  == FACTOR;
 	}
 
-	private boolean isSum(int starter) {
-		return starter == SUM;
+	private boolean starterIsSum() {
+		return currentOpCode.getStarter() == SUM;
 	}
 
-	public int getOperationType() {
-		return indexOpCode;
+	public void setIntCode(int[] intCode) {
+		this.intCode = intCode;
 	}
-
-	public void setOperationType(int operationType) {
-		this.indexOpCode = operationType;
-	}
-
-
 }

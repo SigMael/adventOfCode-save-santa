@@ -2,20 +2,21 @@ package puzzle2;
 
 public class OpCode {
 	private int starter;
-	private int position1;
-	private int position2;
+	private int leftVal;
+	private int rightVal;
 	private int positionToReplace;
 	
-	
+	public OpCode(){}
+
 	public OpCode(int starter, int position1, int position2, int positionToReplace) {
 		this.starter = starter;
-		this.setPosition1(position1);
-		this.setPosition2(position2);
+		this.setLeftVal(position1);
+		this.setRightVal(position2);
 		this.setPositionToReplace(positionToReplace);
 	}
 	
 	public String toString() {
-		return "["+ this.starter + "," + this.position1 + "," + this.position2 + "," + this.positionToReplace  + "]";
+		return "["+ this.starter + "," + this.leftVal + "," + this.rightVal + "," + this.positionToReplace  + "]";
 	}
 
 	public int getStarter() {
@@ -26,20 +27,20 @@ public class OpCode {
 		this.starter = starter;
 	}
 
-	public int getPosition1() {
-		return position1;
+	public int getLeftVal() {
+		return leftVal;
 	}
 
-	public void setPosition1(int position1) {
-		this.position1 = position1;
+	public void setLeftVal(int leftVal) {
+		this.leftVal = leftVal;
 	}
 
-	public int getPosition2() {
-		return position2;
+	public int getRightVal() {
+		return rightVal;
 	}
 
-	public void setPosition2(int position2) {
-		this.position2 = position2;
+	public void setRightVal(int rightVal) {
+		this.rightVal = rightVal;
 	}
 
 	public int getPositionToReplace() {
