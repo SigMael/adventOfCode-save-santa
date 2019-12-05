@@ -14,7 +14,8 @@ public class CrossedWires {
 		
 		performWireMoves();
 		
-		ArrayList<Point> crossPoints = findCrossPoint();
+		ArrayList<Point> crossPoints = findCrossPoints();
+
 		return calculateCloserCrossPoint(crossPoints);
 	}
 
@@ -31,7 +32,7 @@ public class CrossedWires {
 	}
 	
 
-	private ArrayList<Point> findCrossPoint() {
+	private ArrayList<Point> findCrossPoints() {
 		removeWiresDuplicatesPositions();
 		return wire1.findCrossPoints(wire2);
 	}
@@ -43,10 +44,35 @@ public class CrossedWires {
 	}
 	
 	private int calculateCloserCrossPoint(ArrayList<Point> crossPoints) {
-		ArrayList<Integer> manhattanDistances = calculateManhattanDistance(crossPoints);
+		var manhattanDistances = calculateManhattanDistance(crossPoints);
+		var reevaluatedDistances = getOptimisedWireDistances(crossPoints);
 		Collections.sort(manhattanDistances);
-		System.out.println("manhattanDistances="+manhattanDistances);
+		System.out.println(manhattanDistances);
+		System.out.println(reevaluatedDistances);
 		return manhattanDistances.get(0);
+	}
+
+	private Integer getOptimisedWireDistances(ArrayList<Point> crossPoints) {
+		Integer bestCombination = wire1.getPositions().size() + wire2.getPositions().size();
+		for (Point crossPoint :crossPoints) {
+			int nbStepWire1 = getNumberOfSteps(crossPoint, wire1);
+			int nbStepWire2 = getNumberOfSteps(crossPoint, wire2);
+			if(nbStepWire1 + nbStepWire2 < bestCombination){
+				bestCombination = nbStepWire1 + nbStepWire2;
+			}
+		}
+		return  bestCombination;
+	}
+
+	private int getNumberOfSteps(Point crossPoint, Wire wire) {
+		int nbStepWire = 0;
+		for (Point wirePoint: wire.getPositions() ) {
+			nbStepWire ++;
+			if(wirePoint.equals(crossPoint)){
+				break;
+			}
+		}
+		return nbStepWire;
 	}
 
 

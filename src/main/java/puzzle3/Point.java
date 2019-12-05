@@ -10,10 +10,14 @@ public class Point {
 	}
 	
 	public Integer getManhattanDistance() {
-		System.out.println(x+y);
-		return x + y;
+		return getAbsoluteValue(x)+ getAbsoluteValue(y);
 	}
-	
+
+	private Integer getAbsoluteValue(int val) {
+		Double absoluteValue = Math.sqrt(val * val);
+		return absoluteValue.intValue();
+	}
+
 	public boolean equals(Point toComparePoint) {
 		return toComparePoint.getX() == this.x && toComparePoint.getY() == this.y;
 	}
@@ -25,13 +29,7 @@ public class Point {
 	public int getY() {
 		return y;
 	}
-	public void setY(int y) {
-		this.y = y;
-	}
 	public int getX() {
 		return x;
-	}
-	public void setX(int x) {
-		this.x = x;
 	}
 }
