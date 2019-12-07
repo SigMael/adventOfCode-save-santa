@@ -52,16 +52,25 @@ public class CrossedWires {
 		return manhattanDistances.get(0);
 	}
 
+	private ArrayList<Integer> calculateManhattanDistance(ArrayList<Point> crossPoints) {
+		return (ArrayList<Integer>) crossPoints.stream().map(point -> point.getManhattanDistance()).collect(Collectors.toList());
+	}
+
 	private Integer getOptimisedWireDistances(ArrayList<Point> crossPoints) {
 		Integer bestCombination = wire1.getPositions().size() + wire2.getPositions().size();
 		for (Point crossPoint :crossPoints) {
-			int nbStepWire1 = getNumberOfSteps(crossPoint, wire1);
-			int nbStepWire2 = getNumberOfSteps(crossPoint, wire2);
-			if(nbStepWire1 + nbStepWire2 < bestCombination){
-				bestCombination = nbStepWire1 + nbStepWire2;
-			}
+			bestCombination = getBestWiresCrossCombination(bestCombination, crossPoint);
 		}
 		return  bestCombination;
+	}
+
+	private Integer getBestWiresCrossCombination(Integer bestCombination, Point crossPoint) {
+		int nbStepWire1 = getNumberOfSteps(crossPoint, wire1);
+		int nbStepWire2 = getNumberOfSteps(crossPoint, wire2);
+		if(nbStepWire1 + nbStepWire2 < bestCombination){
+			bestCombination = nbStepWire1 + nbStepWire2;
+		}
+		return bestCombination;
 	}
 
 	private int getNumberOfSteps(Point crossPoint, Wire wire) {
@@ -73,10 +82,5 @@ public class CrossedWires {
 			}
 		}
 		return nbStepWire;
-	}
-
-
-	private ArrayList<Integer> calculateManhattanDistance(ArrayList<Point> crossPoints) {
-		return (ArrayList<Integer>) crossPoints.stream().map(point -> point.getManhattanDistance()).collect(Collectors.toList());
 	}
 }
